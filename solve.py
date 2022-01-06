@@ -22,9 +22,30 @@ def lu_decomposition(A: list[list[float]]) -> tuple[list[list[float]], list[list
     return L, U
 
 
+def back_substitution(A: list[list[float]], B: list[float]) -> list[float]:
+    X: list[float] = [0.0 for i in range(N)]
+    for i in reversed(range(0, N)):
+        X[i] = B[i]
+        for k in range(i + 1, N):
+            X[i] -= A[i][k] * X[k]
+        X[i] /= A[i][i]
+
+    return X
+
+
 if __name__ == "__main__":
     N: int = int(input())
     A: list[list[float]] = [list(map(float, input().split())) for i in range(N)]
     B: list[float] = list(map(float, input().split()))
 
+    L: list[list[float]]
+    U: list[list[float]]
     L, U = lu_decomposition(A)
+
+    L = [row[::-1] for row in L[:]][::-1]
+
+    Y: list[float] = back_substitution(L, B[::-1])[::-1]
+
+    X: list[float] = back_substitution(U, Y)
+
+    print(*X)
